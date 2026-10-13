@@ -1,0 +1,59 @@
+name: Daily Observability Digest
+
+# Runs on a schedule (01:00 UTC = 06:30 IST) in the production repository.
+# In this public copy it is manual-only so it never fails on a cron without secrets.
+# To enable the schedule, add the secrets used below and restore:
+#   schedule:
+#     - cron: '0 1 * * *'
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run daily digest
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG_SLUG: ${{ secrets.SENTRY_ORG_SLUG }}
+          SENTRY_PROJECT_SLUG: ${{ secrets.SENTRY_PROJECT_SLUG }}
+          SENTRY_DASHBOARD_URL: ${{ secrets.SENTRY_DASHBOARD_URL }}
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GA4_REPORT_URL: ${{ secrets.GA4_REPORT_URL }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GTM_ACCOUNT_ID: ${{ secrets.GTM_ACCOUNT_ID }}
+          GTM_CONTAINER_ID: ${{ secrets.GTM_CONTAINER_ID }}
+          GTM_WORKSPACE_ID: ${{ secrets.GTM_WORKSPACE_ID }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
+          CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
+          CLARITY_DASHBOARD_URL: ${{ secrets.CLARITY_DASHBOARD_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run report:digest
+
+      - name: Upload redacted summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-observability-summary
+          path: artifacts/daily-observability-summary.json
+          if-no-files-found: ignore

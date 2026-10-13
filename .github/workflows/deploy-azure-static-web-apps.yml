@@ -1,0 +1,74 @@
+name: Deploy to Azure Static Web Apps
+
+# Production deploys run from the private source repository on every push to main.
+# In this public copy the workflow is manual-only so forks and pushes never try
+# to deploy. To use it, add the repository secrets referenced below.
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build and deploy
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+      VITE_RAZORPAY_KEY_ID: ${{ secrets.VITE_RAZORPAY_KEY_ID }}
+      VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
+      VITE_GTM_ID: ${{ secrets.VITE_GTM_ID }}
+      VITE_CLARITY_PROJECT_ID: ${{ secrets.VITE_CLARITY_PROJECT_ID }}
+      VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+      VITE_META_PIXEL_ID: ${{ secrets.VITE_META_PIXEL_ID }}
+      VITE_ALLOWED_TELEMETRY_ORIGINS: ${{ secrets.VITE_ALLOWED_TELEMETRY_ORIGINS }}
+      VITE_APP_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OIDC client from core package
+        run: npm install @actions/core@1.6.0 @actions/http-client
+
+      - name: Get ID token
+        uses: actions/github-script@v7
+        id: idtoken
+        with:
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
+
+      - name: Validate required telemetry build vars
+        shell: bash
+        run: |
+          set -euo pipefail
+          required_vars=(
+            VITE_GA_MEASUREMENT_ID
+            VITE_GTM_ID
+            VITE_CLARITY_PROJECT_ID
+            VITE_SENTRY_DSN
+            VITE_META_PIXEL_ID
+            VITE_APP_ENV
+          )
+          missing=()
+          for var_name in "${required_vars[@]}"; do
+            if [ -z "${!var_name:-}" ]; then
+              missing+=("$var_name")
+            fi
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Missing required build vars: ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Build and deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: /
+          api_location: ''
+          output_location: dist
+          github_id_token: ${{ steps.idtoken.outputs.result }}

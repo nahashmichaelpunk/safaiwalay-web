@@ -1,0 +1,34 @@
+{
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.clarity.ms https://h.clarity.ms https://scripts.clarity.ms https://browser.sentry-cdn.com https://checkout.razorpay.com https://maps.googleapis.com https://connect.facebook.net 'sha256-n/XaZxsop1XRyNwX3sNiyYZDD9mhpNg+OPviMMUMShk='; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.clarity.ms https://e.clarity.ms https://vitals.vercel-insights.com https://*.supabase.co https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://api.razorpay.com https://maps.googleapis.com https://maps.gstatic.com https://places.googleapis.com https://www.facebook.com https://graph.facebook.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https: https://fonts.gstatic.com; frame-src https://checkout.razorpay.com https://www.googletagmanager.com https://www.facebook.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Permissions-Policy": "geolocation=(self), microphone=(), camera=()",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/assets/*",
+      "/Images/*",
+      "*.png",
+      "*.jpg",
+      "*.jpeg",
+      "*.gif",
+      "*.webp",
+      "*.ico",
+      "*.json",
+      "*.svg",
+      "*.woff2",
+      "*.woff",
+      "*.ttf",
+      "/robots.txt",
+      "/sitemap.xml",
+      "/manifest.json",
+      "/sw.js"
+    ]
+  }
+}

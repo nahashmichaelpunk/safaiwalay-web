@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://safaiwalay.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /checkout/
+Disallow: /profile/
+Disallow: /bookings/
+Disallow: /cart/
