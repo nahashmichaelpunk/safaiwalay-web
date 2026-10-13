@@ -140,6 +140,14 @@ with Claude Code, and the commit history records that with a `Co-Authored-By` tr
 - Only the telemetry and location migrations are versioned in `supabase/migrations`.
   The core business tables (users, bookings, payments, reviews, services) were created
   in the Supabase dashboard and are not reproduced here.
+- Dependencies are patched to the latest in-range versions with no critical advisories.
+  The remaining `npm audit` findings are build-time tooling (Tailwind 3, Vite 5, ESLint
+  transitive packages) and React Router 6, which need major-version migrations that are
+  tracked separately rather than forced in here.
+- `@supabase/supabase-js` is pinned to 2.48.0 on purpose: `src/lib/database.types.ts` is
+  hand-written, and newer client versions require generated types (`Relationships`).
+  Upgrading means generating types with the Supabase CLI first; it carries one
+  low-severity `auth-js` advisory until then.
 - Production deployment and the scheduled digest run from a private repository; the
   workflows here are manual-only so forks never attempt a deploy.
 
