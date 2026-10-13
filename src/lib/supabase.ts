@@ -772,29 +772,6 @@ export async function resendVerificationEmail() {
   }
 }
 
-export async function requestWithdrawal(amount: number) {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('No authenticated user');
-
-    const { data, error } = await supabase
-      .from('withdrawal_requests')
-      .insert({
-        user_id: user.id,
-        amount: amount,
-        status: 'pending'
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error('Request withdrawal error:', error);
-    throw error;
-  }
-}
-
 /** True if Supabase reports a valid session and user (validates JWT with server). */
 export async function validateCurrentSession(): Promise<boolean> {
   try {

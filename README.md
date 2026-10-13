@@ -121,6 +121,18 @@ Every push and pull request runs, with no secrets required:
 3. `npm run lint`
 4. `npm run build` (includes the strict TypeScript check)
 
+## AI-assisted development
+
+This project is built with AI assistance. AI is treated as an accelerator, not an
+authority: its output has to pass the same gates as any other code (strict TypeScript,
+ESLint, automated tests, a production build and the repo-hygiene scan, all enforced in
+CI), and decisions about product behaviour, architecture, security and credentials stay
+with the maintainer.
+
+Preparing this public release (sanitizing the history, removing dead code, fixing lint
+and type errors, the hygiene scanner and its tests, and the documentation) was done
+with Claude Code, and the commit history records that with a `Co-Authored-By` trailer.
+
 ## Scope notes
 
 - The UI is verified by type-checking, linting and a production build; there is no
