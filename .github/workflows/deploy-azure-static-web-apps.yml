@@ -26,7 +26,7 @@ jobs:
       VITE_ALLOWED_TELEMETRY_ORIGINS: ${{ secrets.VITE_ALLOWED_TELEMETRY_ORIGINS }}
       VITE_APP_ENV: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install OIDC client from core package
         run: npm install @actions/core@1.6.0 @actions/http-client
